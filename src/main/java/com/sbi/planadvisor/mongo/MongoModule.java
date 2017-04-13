@@ -50,4 +50,29 @@ public class MongoModule {
         return jongo.getCollection("ageFundMappings");
     }
 
+    @Bean(name= "ageRisk")
+    public MongoCollection getAgeRisk(Jongo jongo) {
+    	return jongo.getCollection("ageRisk");
+    }
+    
+    @Bean(name= "locationRisk")
+    public MongoCollection getLocationRisk(Jongo jongo) {
+    	return jongo.getCollection("locationRisk");
+    }
+    
+    @Bean(name= "martialStatusRisk")
+    public MongoCollection getMartialStatusRisk(Jongo jongo) {
+    	return jongo.getCollection("martialStatusRisk");
+    }
+    
+    @Bean(name= "annualIncomeRisk")
+    public MongoCollection getAnnualRisk(Jongo jongo) {
+    	return jongo.getCollection("annualIncomeRisk");
+    }
+    
+    @Bean(name= "finalRisk")
+    public MongoCollection getFinalRisk(Jongo jongo) {
+    	return jongo.getCollection("finalRisk");
+    }
+    
 }

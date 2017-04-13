@@ -1,35 +1,64 @@
 package com.sbi.planadvisor.service;
 
-import com.sbi.planadvisor.dao.AgeFundMappingDao;
-import com.sbi.planadvisor.dto.FundAdvice;
-import com.sbi.planadvisor.entity.AgeFundMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.sbi.planadvisor.dao.AgeRiskDao;
+import com.sbi.planadvisor.dao.AnnualIncomeRiskDao;
+import com.sbi.planadvisor.dao.LocationRiskDao;
+import com.sbi.planadvisor.dao.MartialStatusRiskDao;
+import com.sbi.planadvisor.dao.RiskScoreDao;
+import com.sbi.planadvisor.dto.FundAdvice;
+import com.sbi.planadvisor.dto.UserData;
 
 /**
  * @author Techolution India Pvt Ltd
  */
 @Service
 public class FundAdviceService {
-    private final AgeFundMappingDao ageFundMappingDao;
+    private final AgeRiskDao ageRiskDao;
+    private final LocationRiskDao locationRiskDao;
+    private final MartialStatusRiskDao martialStatusRiskDao;
+    private final AnnualIncomeRiskDao annualIncomeRiskDao;
+    private final RiskScoreDao riskScoreDao;
 
     @Autowired
-    public FundAdviceService(AgeFundMappingDao ageFundMappingDao) {
-        this.ageFundMappingDao = ageFundMappingDao;
+    public FundAdviceService(AgeRiskDao ageRiskDao,LocationRiskDao locationRiskDao,MartialStatusRiskDao martialStatusRiskDao,
+    		AnnualIncomeRiskDao annualIncomeRiskDao, RiskScoreDao riskScoreDao) {
+        this.ageRiskDao = ageRiskDao;
+        this.locationRiskDao = locationRiskDao;
+        this.martialStatusRiskDao = martialStatusRiskDao;
+        this.annualIncomeRiskDao = annualIncomeRiskDao;
+        this.riskScoreDao =  riskScoreDao;
     }
 
-    public FundAdvice getFundAdviceByAge(int age) {
-        Iterable<AgeFundMapping> ageFundMappings = ageFundMappingDao.getByAge(age);
-        List<AgeFundMapping> mappings = new ArrayList<>();
-        for (AgeFundMapping mapping : ageFundMappings) {
-            mappings.add(mapping);
+    public FundAdvice getFundAdviceByAge(UserData request){
+    	System.out.println(request);
+    	int age = request.getAge();
+    	String location = request.getLocation();
+    	String martialStatus = request.getMartialStatus();
+    	int numberOfKids = request.getNumberOfKids(); 
+    	String annualIncome = request.getAnnualIncome();
+        int ageRiskScore = ageRiskDao.getRiskScoreByAge(age);
+        int locationRiskScore = locationRiskDao.getRiskScoreByLocation(location);
+        int martialStatusRiskScore = martialStatusRiskDao.getRiskScoreByMartialStatus(martialStatus);
+        int annualIncomeRiskScore = annualIncomeRiskDao.getRiskScoreByAnnualIncome(annualIncome);
+        System.out.println("ageRisk = "+ageRiskScore);
+        System.out.println("LocationRisk = "+locationRiskScore);
+        System.out.println("AnnualIncome risk = "+annualIncomeRiskScore);
+        int count = 0;
+        if(ageRiskScore != 0) {
+        	++count;
         }
-        if (!mappings.isEmpty()) {
-            AgeFundMapping mapping = mappings.get(0);
-            return new FundAdvice(mapping.getContigencyFund(), mapping.getRetirementFund());
-        } else return null;
+        if(locationRiskScore != 0) {
+        	++count;
+        }
+        if(annualIncomeRiskScore != 0) {
+        	++count;
+        }
+        System.out.println("count = "+count);
+        int averageRiskScore = (ageRiskScore + locationRiskScore +annualIncomeRiskScore)/count;
+        System.out.println("AVerage ="+averageRiskScore);
+        return riskScoreDao.getFundAdviceMetricsByRiskScore(averageRiskScore);
     }
 }

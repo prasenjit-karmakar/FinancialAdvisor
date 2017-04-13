@@ -24,6 +24,6 @@ public class AdviceController {
     @RequestMapping(value = "/fundvalue", method = RequestMethod.POST , consumes = "application/json")
     @ResponseBody
     public FundAdvice getFundValues(@Valid @RequestBody UserData request) {
-        return fundAdviceService.getFundAdviceByAge(request.getAge());
+        return fundAdviceService.getFundAdviceByAge(request);
     }
 }
