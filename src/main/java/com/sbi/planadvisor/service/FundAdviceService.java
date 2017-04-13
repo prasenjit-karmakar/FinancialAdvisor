@@ -33,7 +33,6 @@ public class FundAdviceService {
     }
 
     public FundAdvice getFundAdviceByAge(UserData request){
-    	System.out.println(request);
     	int age = request.getAge();
     	String location = request.getLocation();
     	String martialStatus = request.getMartialStatus();
@@ -43,9 +42,6 @@ public class FundAdviceService {
         int locationRiskScore = locationRiskDao.getRiskScoreByLocation(location);
         int martialStatusRiskScore = martialStatusRiskDao.getRiskScoreByMartialStatus(martialStatus);
         int annualIncomeRiskScore = annualIncomeRiskDao.getRiskScoreByAnnualIncome(annualIncome);
-        System.out.println("ageRisk = "+ageRiskScore);
-        System.out.println("LocationRisk = "+locationRiskScore);
-        System.out.println("AnnualIncome risk = "+annualIncomeRiskScore);
         int count = 0;
         if(ageRiskScore != 0) {
         	++count;
@@ -56,9 +52,7 @@ public class FundAdviceService {
         if(annualIncomeRiskScore != 0) {
         	++count;
         }
-        System.out.println("count = "+count);
         int averageRiskScore = (ageRiskScore + locationRiskScore +annualIncomeRiskScore)/count;
-        System.out.println("AVerage ="+averageRiskScore);
         return riskScoreDao.getFundAdviceMetricsByRiskScore(averageRiskScore);
     }
 }
